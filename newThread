@@ -1,0 +1,102 @@
+package multithreading;
+
+public class Threads {
+
+	public static void main(String[] args) {
+		
+/*		MyThread mt = new MyThread();
+		mt.setPriority(Thread.MIN_PRIORITY);
+		MyFriendThread mft = new MyFriendThread();
+		mft.setPriority(Thread.MAX_PRIORITY);
+		mft.start();
+		mt.start();
+*/
+		
+		ThreadTask ts = new ThreadTask();
+		FirstThread ft = new FirstThread(ts);
+		FinalizeWinners fw = new FinalizeWinners(ts,ft);
+		SecondThread st = new SecondThread(ts,fw);
+		
+		ft.start();
+		st.start();
+		fw.start();
+	}
+}
+
+
+class ThreadTask{
+	
+  static public void hello() {
+		for(int i=0;i<10;i++) {
+			System.out.println("This is it");
+		}
+	}
+}
+
+class FirstThread extends Thread{
+	ThreadTask ts;
+	public FirstThread(ThreadTask ts) {
+		this.ts = ts;
+	}
+	public void run() {
+		ts.hello();
+	}
+}
+
+class FinalizeWinners extends Thread{
+	FirstThread ft;
+	ThreadTask ts;
+	public FinalizeWinners(ThreadTask ts,FirstThread ft) {
+		this.ft = ft;
+		ts.hashCode();
+	}
+	public void run() {
+		try {
+			ft.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}
+
+
+
+class SecondThread extends Thread{
+	
+	//FirstThread ft;
+
+	FinalizeWinners fw;
+	public SecondThread(ThreadTask ts,FinalizeWinners fw) {
+		this.fw = fw;
+		ts.hello();
+	}
+	public void run() {
+		try {
+			fw.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}
+
+
+/*class MyThread extends Thread{
+	public void run() {
+		for(int i=0;i<10;i++) {
+			Thread.yield();
+			System.out.println("My thread "+i);
+		}
+	}
+}
+
+class MyFriendThread extends Thread{
+	public void run() {
+		for(int i=0;i<10;i++) {
+			System.out.println("My friend thread "+i);
+		}
+	}
+}*/
